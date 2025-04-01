@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
@@ -29,8 +29,16 @@ export class UserService {
     return this.userModel.findOne({ email }).exec();
   }
 
+  /**
+   * Busca un usuario por su token personal
+   * @param personalToken Token personal a buscar
+   * @returns El usuario encontrado o null si no existe
+   */
+  async findByPersonalToken(personalToken: string): Promise<UserDocument | null> {
+    return this.userModel.findOne({ personalToken }).exec();
+  }
+
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
-    // En un caso real, aquí deberíamos encriptar la contraseña antes de guardarla
     const newUser = new this.userModel(createUserDto);
     return newUser.save();
   }
@@ -53,5 +61,27 @@ export class UserService {
     if (!result) {
       throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
     }
+  }
+
+  /**
+   * Valida que el token personal proporcionado coincida con el del usuario
+   * @param userId ID del usuario a validar
+   * @param personalToken Token personal a validar
+   * @returns true si el token es válido
+   * @throws UnauthorizedException si el token no es válido
+   * @throws NotFoundException si el usuario no existe
+   */
+  async validatePersonalToken(userId: string, personalToken: string): Promise<boolean> {
+    const user = await this.userModel.findById(userId).exec();
+    
+    if (!user) {
+      throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
+    }
+    
+    if (user.personalToken !== personalToken) {
+      throw new UnauthorizedException('Token personal no válido para este usuario');
+    }
+    
+    return true;
   }
 } 

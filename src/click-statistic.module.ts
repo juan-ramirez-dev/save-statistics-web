@@ -3,12 +3,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ClickStatistic, ClickStatisticSchema } from './schemas/click-statistic.schema';
 import { ClickStatisticService } from './services/click-statistic.service';
 import { ClickStatisticController } from './controllers/click-statistic.controller';
+import { UserModule } from './user.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: ClickStatistic.name, schema: ClickStatisticSchema },
     ]),
+    UserModule,
   ],
   controllers: [ClickStatisticController],
   providers: [ClickStatisticService],

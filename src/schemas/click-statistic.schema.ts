@@ -5,6 +5,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export type ClickStatisticDocument = ClickStatistic & Document;
 
 @Schema({ 
+  collection: 'click_statistics',
   timestamps: true,
   toJSON: {
     transform: (doc, ret) => {

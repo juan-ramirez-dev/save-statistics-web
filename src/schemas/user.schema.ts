@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { ApiProperty, ApiHideProperty } from '@nestjs/swagger';
+import { v4 as uuidv4 } from 'uuid';
 
 export type UserDocument = User & Document;
 
@@ -28,6 +29,10 @@ export class User {
   @ApiHideProperty()
   @Prop({ required: true })
   password: string;
+
+  @ApiProperty({ description: 'Token personal único del usuario' })
+  @Prop({ required: true, default: uuidv4, unique: true })
+  personalToken: string;
 
   @ApiProperty({ description: 'Estado del usuario', default: true })
   @Prop({ default: true })

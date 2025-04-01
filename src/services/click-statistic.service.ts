@@ -1,23 +1,49 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ClickStatistic, ClickStatisticDocument } from '../schemas/click-statistic.schema';
 import { CreateClickStatisticDto } from '../dtos/create-click-statistic.dto';
+import { UserService } from './user.service';
 
 @Injectable()
 export class ClickStatisticService {
   constructor(
     @InjectModel(ClickStatistic.name) private clickStatisticModel: Model<ClickStatisticDocument>,
+    private userService: UserService,
   ) {}
 
   async create(createClickStatisticDto: CreateClickStatisticDto, userId: string): Promise<ClickStatisticDocument> {
-    // Crear el registro de estadística de clic
+    // Validar que el token personal sea válido para este usuario
+    await this.userService.validatePersonalToken(userId, createClickStatisticDto.personalToken);
+    
+    // Crear y guardar el registro de estadística de clic
     const newClickStatistic = new this.clickStatisticModel({
       text: createClickStatisticDto.text,
       userId,
     });
 
-    // Guardar el registro
+    return newClickStatistic.save();
+  }
+
+  /**
+   * Crea una estadística de clic usando solo el token personal
+   * @param text Texto del clic
+   * @param personalToken Token personal del usuario
+   * @returns La estadística de clic creada
+   * @throws UnauthorizedException si el token no es válido
+   */
+  async createWithPersonalToken(text: string, personalToken: string): Promise<ClickStatisticDocument> {
+    const user = await this.userService.findByPersonalToken(personalToken);
+    
+    if (!user) {
+      throw new UnauthorizedException('Token personal no válido');
+    }
+    
+    const newClickStatistic = new this.clickStatisticModel({
+      text,
+      userId: user.id,
+    });
+    
     return newClickStatistic.save();
   }
 
@@ -63,9 +89,12 @@ export class ClickStatisticService {
   }
 
   // Obtener resumen de clics de un usuario específico agrupados por texto
-  async getUserClickSummary(userId: string): Promise<any[]> {
+  async getUserClickSummary(userId: string, personalToken: string): Promise<any[]> {
+    // Validar que el token personal sea válido para este usuario
+    await this.userService.validatePersonalToken(userId, personalToken);
+    
     return this.clickStatisticModel.aggregate([
-      { $match: { userId: userId } },
+      { $match: { userId } },
       {
         $group: {
           _id: '$text',
