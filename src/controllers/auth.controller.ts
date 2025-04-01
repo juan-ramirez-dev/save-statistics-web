@@ -1,8 +1,10 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Post, Body, HttpCode, HttpStatus, Get, UseGuards, Req } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
 import { LoginDto } from '../dtos/login.dto';
 import { CreateUserDto } from '../dtos/create-user.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Request } from 'express';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -26,5 +28,15 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Datos inválidos' })
   async register(@Body() createUserDto: CreateUserDto) {
     return this.authService.register(createUserDto);
+  }
+  
+  @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obtener el perfil del usuario autenticado' })
+  @ApiResponse({ status: 200, description: 'Perfil del usuario' })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  async getProfile(@Req() req: Request) {
+    return this.authService.getProfile(req.user);
   }
 } 

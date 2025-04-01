@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../services/user.service';
@@ -41,10 +41,11 @@ export class AuthService {
     
     return {
       user: {
-        id: userId,
+        _id: userId,
         name: user.name,
         email: user.email,
         role: user.role,
+        personalToken: user.personalToken,
       },
       access_token: this.jwtService.sign(payload),
     };
@@ -77,12 +78,37 @@ export class AuthService {
     
     return {
       user: {
-        id: userId,
+        _id: userId,
         name: newUser.name,
         email: newUser.email,
         role: newUser.role,
+        personalToken: newUser.personalToken,
       },
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  /**
+   * Obtiene el perfil del usuario autenticado
+   * @param user El usuario desde el JWT decodificado
+   * @returns Los datos del perfil del usuario
+   */
+  async getProfile(user: any) {
+    try {
+      const userFound = await this.userService.findOne(user.userId);
+      
+      return {
+        _id: userFound._id,
+        name: userFound.name,
+        email: userFound.email,
+        role: userFound.role,
+        personalToken: userFound.personalToken,
+      };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new UnauthorizedException('Usuario no encontrado');
+      }
+      throw error;
+    }
   }
 } 

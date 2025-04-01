@@ -92,18 +92,7 @@ export class ClickStatisticService {
   async getUserClickSummary(userId: string, personalToken: string): Promise<any[]> {
     // Validar que el token personal sea válido para este usuario
     await this.userService.validatePersonalToken(userId, personalToken);
-    
-    return this.clickStatisticModel.aggregate([
-      { $match: { userId } },
-      {
-        $group: {
-          _id: '$text',
-          count: { $sum: 1 },
-          firstClick: { $min: '$createdAt' },
-          lastClick: { $max: '$createdAt' }
-        }
-      },
-      { $sort: { count: -1 } }
-    ]).exec();
+    const res = await this.clickStatisticModel.find({ userId }).exec();
+    return res
   }
 } 

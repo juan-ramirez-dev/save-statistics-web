@@ -106,9 +106,6 @@ export class ClickStatisticController {
     }
   })
   async getUserClickSummary(@Body('personalToken') personalToken: string, @Req() req) {
-    if (!personalToken) {
-      throw new UnauthorizedException('Token personal no proporcionado');
-    }
     return this.clickStatisticService.getUserClickSummary(req.user.userId, personalToken);
   }
 } 
