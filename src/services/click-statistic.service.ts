@@ -4,12 +4,13 @@ import { Model } from 'mongoose';
 import { ClickStatistic, ClickStatisticDocument } from '../schemas/click-statistic.schema';
 import { CreateClickStatisticDto } from '../dtos/create-click-statistic.dto';
 import { UserService } from './user.service';
-
+import { UniqueClickStatisticService } from './unique-click-statistic.service';
 @Injectable()
 export class ClickStatisticService {
   constructor(
     @InjectModel(ClickStatistic.name) private clickStatisticModel: Model<ClickStatisticDocument>,
     private userService: UserService,
+    private uniqueClickStatisticService: UniqueClickStatisticService,
   ) {}
 
   async create(createClickStatisticDto: CreateClickStatisticDto, userId: string): Promise<ClickStatisticDocument> {
@@ -43,8 +44,12 @@ export class ClickStatisticService {
       text,
       userId: user.id,
     });
-    
-    return newClickStatistic.save();
+
+    const savedClickStatistic = await newClickStatistic.save();
+
+    this.uniqueClickStatisticService.createWithPersonalToken(text,personalToken);
+
+    return savedClickStatistic
   }
 
   async findAll(): Promise<ClickStatisticDocument[]> {
@@ -71,21 +76,6 @@ export class ClickStatisticService {
     if (!result) {
       throw new NotFoundException(`Estadística de clic con ID ${id} no encontrada`);
     }
-  }
-
-  // Obtener resumen de clics agrupados por texto
-  async getClickSummary(): Promise<any[]> {
-    return this.clickStatisticModel.aggregate([
-      {
-        $group: {
-          _id: '$text',
-          count: { $sum: 1 },
-          firstClick: { $min: '$createdAt' },
-          lastClick: { $max: '$createdAt' }
-        }
-      },
-      { $sort: { count: -1 } }
-    ]).exec();
   }
 
   // Obtener resumen de clics de un usuario específico agrupados por texto

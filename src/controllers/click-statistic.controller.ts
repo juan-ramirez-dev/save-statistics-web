@@ -75,15 +75,6 @@ export class ClickStatisticController {
     return this.clickStatisticService.remove(id);
   }
 
-  @Get('summary/all')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiBearerAuth()
-  @Roles('admin')
-  @ApiOperation({ summary: 'Obtener resumen de todos los clics agrupados por texto (solo admin)' })
-  @ApiResponse({ status: 200, description: 'Resumen de clics' })
-  async getClickSummary() {
-    return this.clickStatisticService.getClickSummary();
-  }
 
   @Post('summary/my-clicks')
   @UseGuards(JwtAuthGuard)

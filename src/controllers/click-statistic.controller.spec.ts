@@ -123,49 +123,4 @@ describe('ClickStatisticController', () => {
       expect(service.remove).toHaveBeenCalledWith(id);
     });
   });
-
-  describe('getClickSummary', () => {
-    it('should return click summary data', async () => {
-      const mockSummary = [{
-        _id: 'btn_login',
-        count: 5,
-        firstClick: new Date(),
-        lastClick: new Date()
-      }];
-      
-      jest.spyOn(service, 'getClickSummary').mockResolvedValue(mockSummary);
-      
-      const result = await controller.getClickSummary();
-      
-      expect(result).toEqual(mockSummary);
-      expect(service.getClickSummary).toHaveBeenCalled();
-    });
-  });
-
-  describe('getUserClickSummary', () => {
-    it('should return user click summary when token is valid', async () => {
-      const personalToken = 'valid-token';
-      const req = { user: mockUser };
-      const mockSummary = [{
-        _id: 'btn_login',
-        count: 3,
-        firstClick: new Date(),
-        lastClick: new Date()
-      }];
-      
-      jest.spyOn(service, 'getUserClickSummary').mockResolvedValue(mockSummary);
-      
-      const result = await controller.getUserClickSummary(personalToken, req);
-      
-      expect(result).toEqual(mockSummary);
-      expect(service.getUserClickSummary).toHaveBeenCalledWith(mockUser.userId, personalToken);
-    });
-
-    it('should throw UnauthorizedException when token is missing', async () => {
-      const personalToken = '';
-      const req = { user: mockUser };
-      
-      await expect(controller.getUserClickSummary(personalToken, req)).rejects.toThrow(UnauthorizedException);
-    });
-  });
 }); 

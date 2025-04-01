@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user.module';
 import { AuthModule } from './auth/auth.module';
 import { ClickStatisticModule } from './click-statistic.module';
+import { UniqueClickStatisticModule } from './unique-click-statistic.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -36,6 +37,7 @@ import configuration from './config/configuration';
     UserModule,
     AuthModule,
     ClickStatisticModule,
+    UniqueClickStatisticModule,
   ],
   controllers: [AppController],
   providers: [AppService],
