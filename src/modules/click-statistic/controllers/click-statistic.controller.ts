@@ -99,4 +99,38 @@ export class ClickStatisticController {
   async getUserClickSummary(@Body('personalToken') personalToken: string, @Req() req) {
     return this.clickStatisticService.getUserClickSummary(req.user.userId, personalToken);
   }
+
+  @Post('by-text')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obtener todos los clics de un usuario basados en el texto del clic' })
+  @ApiResponse({ status: 200, description: 'Lista de clics que coinciden con el texto', type: [ClickStatistic] })
+  @ApiResponse({ status: 401, description: 'No autorizado - Token personal inválido' })
+  @ApiResponse({ status: 404, description: 'No se encontraron clics con ese texto' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        text: {
+          type: 'string',
+          example: 'hamburguesas',
+          description: 'Texto del clic a buscar'
+        },
+        personalToken: {
+          type: 'string',
+          format: 'uuid',
+          example: '550e8400-e29b-41d4-a716-446655440000',
+          description: 'Token personal único del usuario'
+        }
+      },
+      required: ['text', 'personalToken']
+    }
+  })
+  async findClicksByText(
+    @Body('text') text: string,
+    @Body('personalToken') personalToken: string,
+    @Req() req
+  ) {
+    return this.clickStatisticService.findClicksByText(req.user.userId, text, personalToken);
+  }
 } 

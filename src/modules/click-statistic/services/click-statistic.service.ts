@@ -85,4 +85,30 @@ export class ClickStatisticService {
     const res = await this.clickStatisticModel.find({ userId }).exec();
     return res
   }
+
+  /**
+   * Obtener todos los clics de un usuario basados en el texto del clic
+   * @param userId ID del usuario
+   * @param text Texto del clic a buscar
+   * @param personalToken Token personal del usuario para validación
+   * @returns Array de estadísticas de clics que coinciden con el texto
+   * @throws UnauthorizedException si el token personal no es válido
+   * @throws NotFoundException si no se encuentran clics con ese texto
+   */
+  async findClicksByText(userId: string, text: string, personalToken: string): Promise<ClickStatisticDocument[]> {
+    // Validar que el token personal sea válido para este usuario
+    await this.userService.validatePersonalToken(userId, personalToken);
+    
+    // Buscar todos los clics que coincidan con el texto y el userId
+    const clicks = await this.clickStatisticModel.find({ 
+      userId, 
+      text 
+    }).sort({ createdAt: -1 }).exec();
+    
+    if (!clicks || clicks.length === 0) {
+      throw new NotFoundException(`No se encontraron clics con el texto "${text}" para este usuario`);
+    }
+    
+    return clicks;
+  }
 } 
