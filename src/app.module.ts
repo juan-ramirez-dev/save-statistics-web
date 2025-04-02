@@ -4,11 +4,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user.module';
-import { AuthModule } from './auth/auth.module';
-import { ClickStatisticModule } from './click-statistic.module';
-import { UniqueClickStatisticModule } from './unique-click-statistic.module';
+import { UserModule } from './modules/user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UniqueClickStatisticModule } from './modules/unique-click-statistic/unique-click-statistic.module';
 import configuration from './config/configuration';
+import { ClickStatisticModule } from './modules/click-statistic/click-statistic.module';
 
 @Module({
   imports: [

@@ -7,7 +7,7 @@ import {
 } from '../schemas/unique-click-statistic.schema';
 import { CreateUniqueClickStatisticDto } from '../dtos/create-unique-click-statistic.dto';
 import { UpdateUniqueClickStatisticDto } from '../dtos/update-unique-click-statistic.dto';
-import { UserService } from './user.service';
+import { UserService } from '../../user/services/user.service';
 
 @Injectable()
 export class UniqueClickStatisticService {

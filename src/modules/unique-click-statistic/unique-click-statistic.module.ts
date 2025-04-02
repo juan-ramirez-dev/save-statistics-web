@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UniqueClickStatistic, UniqueClickStatisticSchema } from './schemas/unique-click-statistic.schema';
 import { UniqueClickStatisticService } from './services/unique-click-statistic.service';
 import { UniqueClickStatisticController } from './controllers/unique-click-statistic.controller';
-import { UserModule } from './user.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [

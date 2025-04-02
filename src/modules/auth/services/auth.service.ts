@@ -1,10 +1,10 @@
 import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UserService } from '../services/user.service';
-import { UserDocument } from '../schemas/user.schema';
+import { UserService } from '../../user/services/user.service';
+import { UserDocument } from '../../user/schemas/user.schema';
 import { LoginDto } from '../dtos/login.dto';
-import { CreateUserDto } from '../dtos/create-user.dto';
+import { CreateUserDto } from '../../user/dtos/create-user.dto';
 import { Types } from 'mongoose';
 
 @Injectable()

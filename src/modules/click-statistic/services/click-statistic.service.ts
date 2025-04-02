@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ClickStatistic, ClickStatisticDocument } from '../schemas/click-statistic.schema';
 import { CreateClickStatisticDto } from '../dtos/create-click-statistic.dto';
-import { UserService } from './user.service';
-import { UniqueClickStatisticService } from './unique-click-statistic.service';
+import { UserService } from '../../user/services/user.service';
+import { UniqueClickStatisticService } from '../../unique-click-statistic/services/unique-click-statistic.service';
 @Injectable()
 export class ClickStatisticService {
   constructor(

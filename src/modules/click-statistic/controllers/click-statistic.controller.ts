@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, Param, Delete, UseGuards, Req, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
 import { ClickStatisticService } from '../services/click-statistic.service';
 import { CreateClickStatisticDto } from '../dtos/create-click-statistic.dto';
 import { SimpleClickStatisticDto } from '../dtos/simple-click-statistic.dto';
